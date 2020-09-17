@@ -42,7 +42,7 @@ namespace PADAWAN.Universidade.Controllers
 
         [HttpGet]
         [Route("BuscaAluno")]
-        public ActionResult GetAluno(string nome)//ok
+        public ActionResult GetAluno(string nome, string sobrenome, DateTime data)//ok
         {
             try
             {
@@ -80,22 +80,22 @@ namespace PADAWAN.Universidade.Controllers
         }
 
         [HttpPut]
-        [Route("UpdateAluno")]//e pra atualizar uso o cpf? nao poderia ser mais simples?
+        [Route("UpdateAluno")]
         public ActionResult UpdateAluno(string cpfAluno, string novoAluno)
         {
             var result = new Result<List<Aluno>>();
             try
             {
-                //como recuperar o id ou a posicao que estava este objeto para por o modificado?
-                //sera que preciso excluir o velho e criar um novo aluno atualizado? o id sera diferente
+                
                 result.Data = listaAlunos.Where(x => x.CPF == cpfAluno).ToList();
                 var newAluno = result.Data.Select(s =>
                 {
-                    s.CPF = novoAluno; // aqui tenho que colocar o valor do form pro usuário decidir qual campo quer alterar, depois que encontra o aluno pelo cpf
+                    s.CPF = novoAluno; 
                     return s;
 
                 }).ToList();
-
+                //listaAlunos.Add((Aluno) newAluno[0]);
+               // listaAlunos.Add(result.Data[0]);
                 
                 return Ok("Trocou!");//trocou sem eu ter adicionado na lista!!!get-put
             }
