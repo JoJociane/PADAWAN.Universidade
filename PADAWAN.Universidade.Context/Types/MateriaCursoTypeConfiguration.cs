@@ -7,17 +7,12 @@ using System.Text;
 
 namespace PADAWAN.Universidade.Context.Types
 {
-    public class NotasTypeConfiguration : IEntityTypeConfiguration<Notas>
+    public class MateriaCursoTypeConfiguration : IEntityTypeConfiguration<MateriaCurso>
     {
-        public void Configure(EntityTypeBuilder<Notas> builder)
+        public void Configure(EntityTypeBuilder<MateriaCurso> builder)
         {
-            builder.HasKey(q => q.Id);
-
-            builder.Property(q => q.ValorNota).IsRequired();
-
             builder.HasOne(q => q.Materia).WithMany().HasForeignKey(q => q.IdMateria);
-
-            builder.HasOne(q => q.Aluno).WithMany().HasForeignKey(q => q.IdAluno);
+            builder.HasOne(q => q.Curso).WithMany().HasForeignKey(q => q.IdCurso);
 
         }
     }

@@ -42,7 +42,7 @@ namespace PADAWAN.Universidade.Controllers
 
         [HttpGet]
         [Route("BuscaAluno")]
-        public ActionResult GetAluno(string nome, string sobrenome, DateTime data)//ok
+        public ActionResult BuscaAluno(string nome)//ok
         {
             try
             {
@@ -71,7 +71,7 @@ namespace PADAWAN.Universidade.Controllers
                 if (result == 0) //se for 0 ele nao removeu nada da lista
                     return BadRequest(Message.Failure);
                 else
-                    return Ok("Removeu!");
+                    return Ok("Aluno removido com Sucesso!");
             }
             catch (Exception)
             {
@@ -97,7 +97,7 @@ namespace PADAWAN.Universidade.Controllers
                 //listaAlunos.Add((Aluno) newAluno[0]);
                // listaAlunos.Add(result.Data[0]);
                 
-                return Ok("Trocou!");//trocou sem eu ter adicionado na lista!!!get-put
+                return Ok("Aluno Atualizado com Sucesso!");//trocou sem eu ter adicionado na lista!!!get-put
             }
             catch (Exception ex)
             {

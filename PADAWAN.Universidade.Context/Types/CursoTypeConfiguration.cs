@@ -19,7 +19,6 @@ namespace PADAWAN.Universidade.Context.Types
             builder.HasMany(q => q.Materias).WithOne().HasForeignKey(q => q.IdCurso);
             builder.HasMany(q => q.Alunos).WithOne().HasForeignKey(q => q.IdCurso);
 
-
         }
     }
 }

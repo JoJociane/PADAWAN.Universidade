@@ -28,6 +28,9 @@ namespace PADAWAN.Universidade
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddMvc().AddNewtonsoftJson(q => q.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+
             //---
             services.AddSwaggerGen(s =>
             {
