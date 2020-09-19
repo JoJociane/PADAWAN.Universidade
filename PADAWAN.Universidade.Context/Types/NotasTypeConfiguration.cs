@@ -11,13 +11,15 @@ namespace PADAWAN.Universidade.Context.Types
     {
         public void Configure(EntityTypeBuilder<Notas> builder)
         {
-            builder.HasKey(q => q.Id);
+            builder.HasKey(q => q.IdAluno);
+            builder.HasKey(q => q.IdMateria);
 
+            
             builder.Property(q => q.ValorNota).IsRequired();
+            
 
-            builder.HasOne(q => q.Materia).WithMany().HasForeignKey(q => q.IdMateria);
-
-            builder.HasOne(q => q.Aluno).WithMany().HasForeignKey(q => q.IdAluno);
+           //builder.HasOne(q => q.Materia).WithMany().HasForeignKey(q => q.IdMateria);
+           //builder.HasOne(q => q.Aluno).WithMany().HasForeignKey(q => q.IdAluno);
 
         }
     }

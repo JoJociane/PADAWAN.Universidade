@@ -19,7 +19,7 @@ namespace PADAWAN.Universidade.Context.Types
             builder.Property(q => q.CPF).HasMaxLength(16).IsRequired();
 
             //aluno-curso 1:n
-            builder.HasOne(q => q.Curso).WithMany().HasForeignKey(q => q.IdCurso);
+            //builder.HasOne(q => q.Curso).WithMany().HasForeignKey(q => q.IdCurso);
         }
     }
 }

@@ -6,8 +6,8 @@ namespace PADAWAN.Universidade.Util.Models
 {
     public class Notas
     {
-        public int Id { get; set; }
        
+      
         public int IdAluno { get; set; }
 
         public int IdMateria { get; set; }

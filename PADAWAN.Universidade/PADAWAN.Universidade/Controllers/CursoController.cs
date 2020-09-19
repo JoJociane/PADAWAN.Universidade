@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PADAWAN.Universidade.Context;
 using PADAWAN.Universidade.Util;
 using PADAWAN.Universidade.Util.Models;
 using System;
@@ -14,7 +15,8 @@ namespace PADAWAN.Universidade.API.Controllers
     {
         public static List<Curso> listaCurso = new List<Curso>();
 
-        [HttpGet]
+        
+        [HttpGet]//exemplo
         [Route("GetCuso")]
         public ActionResult GetCurso()
         {
@@ -23,35 +25,34 @@ namespace PADAWAN.Universidade.API.Controllers
                 Nome = "Ingles",
                 SituacaoCurso ="Ativo"
             };
-
            // curso.Materias.Add(new Materia() { }); 
-
-            return Ok(curso);
+            return Ok(curso); //retorno o objeto para inserir no swagger
         }
-
-        [HttpPost]
+        
+        [HttpPost] //ok
         [Route("PostCurso")]
-        public ActionResult PostCurso(Curso curso)//vem do front
+        public ActionResult PostCurso(Curso curso)//objeto vem do front
         {
-           if(new Curso().Adiciona(curso))
+            var t = new Tools<Curso>();
+
+           if(t.Adiciona(curso))
             {
-                return Ok();
+                return Ok("Adicionou!");
             }
             else
             {
-                return BadRequest(Message.Failure);
+                return BadRequest("Curso já existe!");
             }
-
-
         }
 
 
-        [HttpGet]
+       /* [HttpGet]
         [Route("BuscaCurso")]
         public ActionResult BuscaCurso(string curso)//ok
         {
-            new Curso().BuscaCurso(curso);
-        }
+            var t = new Tools<Curso>();
+            t.BuscaCurso(curso);
+        }*/
 
         [HttpDelete]
         [Route("DeleteCurso")]

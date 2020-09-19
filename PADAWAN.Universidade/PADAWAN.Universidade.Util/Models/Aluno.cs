@@ -13,6 +13,7 @@ namespace PADAWAN.Universidade.Util.Models
         public string CPF { get; set; }
         public int IdCurso { get; set; }
         public virtual Curso Curso { get; set; }
+        public ICollection<Notas> Nota { get; set; } = new List<Notas>();
 
 
     }

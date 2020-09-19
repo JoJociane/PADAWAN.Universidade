@@ -13,9 +13,10 @@ namespace PADAWAN.Universidade.Util.Models
 
         public string SituacaoMateria { get; set; }
 
-        public int IdCurso { get; set; }
+        public ICollection<MateriaCurso> MateriaCurso { get; set; } = new List<MateriaCurso>();
 
-        public virtual Curso Curso { get; set; }
+        public ICollection<Notas> Nota { get; set; } = new List<Notas>();
+
 
     }
 }

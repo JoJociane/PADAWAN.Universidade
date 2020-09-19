@@ -23,7 +23,7 @@ namespace PADAWAN.Universidade.API.Controllers
                 Descricao = "Matematica",
                 DataCadastro = new DateTime(1997, 12, 24),
                 SituacaoMateria = "Ativa",
-                IdCurso = 1
+                
             };
 
             return Ok(materia);

@@ -11,8 +11,11 @@ namespace PADAWAN.Universidade.Context.Types
     {
         public void Configure(EntityTypeBuilder<MateriaCurso> builder)
         {
-            builder.HasOne(q => q.Materia).WithMany().HasForeignKey(q => q.IdMateria);
-            builder.HasOne(q => q.Curso).WithMany().HasForeignKey(q => q.IdCurso);
+            builder.HasKey(q => q.IdCurso);
+            builder.HasKey(q => q.IdMateria);
+
+           // builder.HasOne(q => q.Materia).WithMany().HasForeignKey(q => q.IdMateria);
+           // builder.HasOne(q => q.Curso).WithMany().HasForeignKey(q => q.IdCurso);
 
         }
     }

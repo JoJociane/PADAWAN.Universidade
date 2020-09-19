@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using PADAWAN.Universidade.Context;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace PADAWAN.Universidade
@@ -30,8 +32,6 @@ namespace PADAWAN.Universidade
             services.AddControllers();
             services.AddMvc().AddNewtonsoftJson(q => q.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-
-            //---
             services.AddSwaggerGen(s =>
             {
                 s.SwaggerDoc("v1", new OpenApiInfo
@@ -40,7 +40,8 @@ namespace PADAWAN.Universidade
                     Version = "v1"
                 });
             });
-            //--
+            
+            services.AddDbContext<BDUniversidadeContext>(op => op.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
         }
 

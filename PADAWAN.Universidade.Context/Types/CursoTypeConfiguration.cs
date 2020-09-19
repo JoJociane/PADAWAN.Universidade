@@ -16,8 +16,9 @@ namespace PADAWAN.Universidade.Context.Types
             builder.Property(q => q.Nome).HasMaxLength(100).IsRequired();
             builder.Property(q => q.SituacaoCurso).HasMaxLength(100).IsRequired();
 
-            builder.HasMany(q => q.Materias).WithOne().HasForeignKey(q => q.IdCurso);
-            builder.HasMany(q => q.Alunos).WithOne().HasForeignKey(q => q.IdCurso);
+            //????
+            //builder.HasMany(q => q.Materias).WithOne().HasForeignKey(q => q.IdCurso);
+            //builder.HasMany(q => q.Alunos).WithOne().HasForeignKey(q => q.IdCurso);
 
         }
     }
