@@ -11,11 +11,8 @@ namespace PADAWAN.Universidade.API.Controllers
 {
     [ApiController]
     [Route("CadastroCurso")]
-    public class CursoController: ControllerBase
+    public class CursoController : ControllerBase
     {
-        public static List<Curso> listaCurso = new List<Curso>();
-
-        
         [HttpGet]//exemplo
         [Route("GetCuso")]
         public ActionResult GetCurso()
@@ -23,19 +20,19 @@ namespace PADAWAN.Universidade.API.Controllers
             var curso = new Curso()
             {
                 Nome = "Ingles",
-                SituacaoCurso ="Ativo"
+                SituacaoCurso = "Ativo"
             };
-           // curso.Materias.Add(new Materia() { }); 
+            // curso.Materias.Add(new Materia() { }); 
             return Ok(curso); //retorno o objeto para inserir no swagger
         }
-        
+
+
         [HttpPost] //ok
         [Route("PostCurso")]
         public ActionResult PostCurso(Curso curso)//objeto vem do front
         {
             var t = new Tools<Curso>();
-
-           if(t.Adiciona(curso))
+            if (t.Adiciona(curso))
             {
                 return Ok("Adicionou!");
             }
@@ -46,13 +43,19 @@ namespace PADAWAN.Universidade.API.Controllers
         }
 
 
-       /* [HttpGet]
+        [HttpGet]//ok
         [Route("BuscaCurso")]
-        public ActionResult BuscaCurso(string curso)//ok
+        public ActionResult Busca(string curso)
         {
             var t = new Tools<Curso>();
-            t.BuscaCurso(curso);
-        }*/
+            var encontrou = t.FindCurso(curso, out bool temcurso);
+            if (!temcurso) { return BadRequest("Curso não encontrado/cadastrado!"); }
+            else
+            {
+                return Ok(encontrou);
+            }
+
+        }
 
         [HttpDelete]
         [Route("DeleteCurso")]
@@ -60,12 +63,17 @@ namespace PADAWAN.Universidade.API.Controllers
         {
             try
             {
-                var result = listaCurso.RemoveAll(x => x.Nome == curso);
+                var t = new Tools<Curso>();
+                var removeu = t.DeleteCurso(curso);
 
-                if (result == 0)
-                    return BadRequest(Message.Failure);
+                if (!removeu)//false
+                {
+                    return BadRequest("Houve algum erro! O Curso nao foi encontrado/removido!");
+                }
                 else
+                {
                     return Ok("Curso Removido com Sucesso!");
+                }
             }
             catch (Exception)
             {
@@ -73,34 +81,30 @@ namespace PADAWAN.Universidade.API.Controllers
             }
         }
 
-
+        
         [HttpPut]
         [Route("UpdateCurso")]
-        public ActionResult UpdateCurso(string curso, string novocurso)
+        public ActionResult UpdateCurso(int IDcurso, string novocurso)
         {
-            var result = new Result<List<Curso>>();
             try
             {
+                var t = new Tools<Curso>();
+                var atualizou= t.UpdateCurso(IDcurso,novocurso);
 
-                result.Data = listaCurso.Where(x => x.Nome == curso).ToList();
-
-
-                var newMateria = result.Data.Select(s =>
+                if (!atualizou)//false
                 {
-                    s.Nome = novocurso;
-                    return s;
-
-                }).ToList();
-                return Ok("Curso Atualizado com Sucesso!");
+                    return BadRequest("Houve algum erro! O Curso nao foi encontrado/atualizado!");
+                }
+                else
+                {
+                    return Ok("Curso Atualizado com Sucesso!");
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                result.Error = true;
-                result.Message = ex.Message;
-                return BadRequest(result);
+                return BadRequest(Message.Failure);
             }
 
         }
-
     }
 }

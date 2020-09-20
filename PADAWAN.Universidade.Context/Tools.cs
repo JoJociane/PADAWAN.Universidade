@@ -1,9 +1,15 @@
 ﻿using PADAWAN.Universidade.Context;
+using PADAWAN.Universidade.Util;
 using PADAWAN.Universidade.Util.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+
 
 namespace PADAWAN.Universidade.Context
 {
@@ -40,23 +46,77 @@ namespace PADAWAN.Universidade.Context
         }
 
         
-        public bool BuscaCurso(string curso)
+        public List<Curso> FindCurso(string curso, out bool temcurso)
         {
-            try
+            conexao = new BDUniversidadeContext();
+            using (conexao)
             {
+                //busca no banco na Tabela Curso, 
+                //try
                 var result = conexao.Cursos.Where(x => x.Nome.Contains(curso)).ToList();
-                if (result.Count == 0)
+                if (result.Count == 0)//nao encontrou
                 {
-                    return false;
+                    temcurso = false;
+                    return result;
                 }
                 else
-                    return true;
+                {
+                    temcurso = true;
+                    return result;
+                }
+                //catch (Exception ex)
             }
-            catch (Exception ex)
-            {
-                return false;
-            }
+        }
 
+        public bool DeleteCurso(string curso)
+        {
+            bool removeu;
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var result = conexao.Cursos.Where(x => x.Nome.Contains(curso)).ToList();
+                if(result.Count == 0)//nao encontrou o curso p remover
+                {
+                    return removeu = false;
+                }
+                else
+                {
+                    conexao.Cursos.Remove(result.FirstOrDefault());
+                    conexao.SaveChanges();
+                    removeu = true;
+                    return removeu;
+                }
+                
+            }
+        }
+
+        public bool UpdateCurso(int IDcurso, string novocurso)
+        {
+            bool atualizou;
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var result = conexao.Cursos.Where(x => x.Id == IDcurso).ToList();
+                if(result.Count == 0)
+                {
+                    return atualizou = false;
+                }
+                else
+                {
+                    var meucursinho = result.FirstOrDefault();
+                    // var newcurso = meucursinho;//copio objetos
+                    //newcurso.Nome = novocurso;//seto nome novo obj
+
+                    meucursinho.Nome = novocurso;
+                    atualizou = true;
+                    // conexao.Cursos.Add(newcurso);//add no banco
+                    conexao.SaveChanges();
+                    return atualizou;
+                   // conexao.Cursos.Remove(meucursinho);//excluo anterior
+                    
+                    
+                }
+            }
         }
     }
 }
