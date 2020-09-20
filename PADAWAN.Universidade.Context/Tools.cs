@@ -211,5 +211,95 @@ namespace PADAWAN.Universidade.Context
 
 
 
+        public bool Adiciona(Materia materia)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                
+                var retorno = conexao.Materias.Where(q => q.Descricao == materia.Descricao).Any();
+
+                if (!retorno)//nao tenho, logo add
+                {
+                    conexao.Materias.Add(materia);
+                    conexao.SaveChanges();
+                    return true;
+                }
+                else//ja consta no bd
+                {
+                    return false;
+                }
+            }
+        }
+
+        public List<Materia> FindMateria(string materia, out bool encontrou)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                //busca no banco na Tabela Alunos, 
+                //try
+                var result = conexao.Materias.Where(x => x.Descricao.Contains(materia)).ToList();
+                if (result.Count == 0)//nao encontrou
+                {
+                    encontrou = false;
+                    return result;
+                }
+                else
+                {
+                    encontrou = true;
+                    return result;
+                }
+                //catch (Exception ex)
+            }
+        }
+
+        public bool DeleteMateria(string materia)
+        {
+            bool removeu;
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var result = conexao.Materias.Where(x => x.Descricao.Contains(materia)).ToList();
+
+                if (result.Count == 0)//nao encontrou o materias p remover
+                {
+                    return removeu = false;
+                }
+                else
+                {
+                    conexao.Materias.Remove(result.FirstOrDefault());
+                    conexao.SaveChanges();
+                    removeu = true;
+                    return removeu;
+                }
+
+            }//Deletar em cascada? 
+        }
+
+        public bool UpdateMateria(int IDmateria, string novonome)
+        {
+            bool atualizou;
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var result = conexao.Materias.Where(x => x.Id == IDmateria).ToList();
+                if (result.Count == 0)
+                {
+                    return atualizou = false;
+                }
+                else
+                {
+                    var mat = result.FirstOrDefault();
+                    mat.Descricao = novonome;
+                    atualizou = true;
+                    conexao.SaveChanges();
+                    return atualizou;
+
+                }
+            }
+        }
+
+
     }
 }

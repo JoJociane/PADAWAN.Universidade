@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PADAWAN.Universidade.Context;
 using PADAWAN.Universidade.Util;
 using PADAWAN.Universidade.Util.Models;
 using System;
@@ -14,7 +15,7 @@ namespace PADAWAN.Universidade.API.Controllers
     {
         public static List<Materia> listaMateria = new List<Materia>(); 
 
-        [HttpGet]
+        [HttpGet]//exemplo
         [Route("GetMateria")]
         public ActionResult GetMateria()
         {
@@ -30,26 +31,33 @@ namespace PADAWAN.Universidade.API.Controllers
         }
 
         [HttpPost]
-        [Route("PostMateria")]
-        public ActionResult PostMateria(Materia materia)//ok
+        [Route("PostMateria")]//ok
+        public ActionResult PostMateria(Materia materia)
         {
-            listaMateria.Add(materia);
-            return Ok();
+            var t = new Tools<Materia>();
+            if (t.Adiciona(materia))
+            {
+                return Ok("Adicionou!");
+            }
+            else
+            {
+                return BadRequest("Materia já existe!");
+            }
         }
 
         [HttpGet]
-        [Route("BuscaMateria")]
-        public ActionResult BuscaMateria(string materia)//ok
+        [Route("BuscaMateria")]//ok
+        public ActionResult BuscaMateria(string materia)
         {
             try
             {
-                var result = listaMateria.Where(x => x.Descricao.Contains(materia)).ToList();
-                if (result.Count == 0)
-                {
-                    return BadRequest(Message.Failure);
-                }
+                var t = new Tools<Materia>();
+                var encontrou = t.FindMateria(materia, out bool tem_mat);
+                if (!tem_mat) { return BadRequest("Materia não encontrada/cadastrada!"); }
                 else
-                    return Ok(result);
+                {
+                    return Ok(encontrou);
+                }
             }
             catch (Exception ex)
             {
@@ -59,17 +67,22 @@ namespace PADAWAN.Universidade.API.Controllers
 
 
         [HttpDelete]
-        [Route("DeleteMateria")]
+        [Route("DeleteMateria")]//ok
         public ActionResult DeleteMateria(string materia)
         {
             try
             {
-                var result = listaMateria.RemoveAll(x => x.Descricao == materia);
+                var t = new Tools<Materia>();
+                var removeu = t.DeleteMateria(materia);
 
-                if (result == 0) 
-                    return BadRequest(Message.Failure);
+                if (!removeu)//false
+                {
+                    return BadRequest("Houve algum erro! A Materia nao foi encontrada/removida!");
+                }
                 else
+                {
                     return Ok("Materia Removida com Sucesso!");
+                }
             }
             catch (Exception)
             {
@@ -78,29 +91,26 @@ namespace PADAWAN.Universidade.API.Controllers
         }
 
         [HttpPut]
-        [Route("UpdateMateria")]
-        public ActionResult UpdateMateria(string materia, string novamateria)
+        [Route("UpdateMateria")]//ok
+        public ActionResult UpdateMateria(int IDmateria, string novamateria)
         {
-            var result = new Result<List<Materia>>();
             try
             {
+                var t = new Tools<Curso>();
+                var atualizou = t.UpdateMateria(IDmateria, novamateria);
 
-                result.Data = listaMateria.Where(x => x.Descricao == materia).ToList();
-
-
-                var newMateria = result.Data.Select(s =>
+                if (!atualizou)//false
                 {
-                    s.Descricao = novamateria ;
-                    return s;
-
-                }).ToList();
-                return Ok("Materia Atualizada com Sucesso!");
+                    return BadRequest("Houve algum erro! A Materia nao foi encontrada/atualizada!");
+                }
+                else
+                {
+                    return Ok("Materia Atualizada com Sucesso!");
+                }
             }
             catch (Exception ex)
             {
-                result.Error = true;
-                result.Message = ex.Message;
-                return BadRequest(result);
+                return BadRequest(Message.Failure);
             }
 
         }
