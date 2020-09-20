@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PADAWAN.Universidade.Context;
 using PADAWAN.Universidade.Util;
 using PADAWAN.Universidade.Util.Models;
 
@@ -13,12 +14,9 @@ namespace PADAWAN.Universidade.Controllers
     [Route("CadastroAluno")]
     public class AlunoController : ControllerBase
     {
-
-        public static List<Aluno> listaAlunos = new List<Aluno>(); //aparentemente esta lista é meu banco
-
         [HttpGet]
         [Route("GetAluno")]
-        public ActionResult GetAluno()//ok
+        public ActionResult GetAluno()
         {
             var aluno = new Aluno()//inserir para verificar, vou popular minha tabela no sql
             {
@@ -26,33 +24,40 @@ namespace PADAWAN.Universidade.Controllers
                 Sobrenome = "da Silva",
                 DataNascimento = new DateTime(1997, 12, 24),
                 CPF = "796.655.920-33",
-                IdCurso=1
+                IdCurso=2
             };
 
             return Ok(aluno);
         }
 
         [HttpPost]
-        [Route("PostAluno")]
-        public ActionResult PostAluno(Aluno aluno)//ok
+        [Route("PostAluno")]//ok, mas ver questao da FK
+        public ActionResult PostAluno(Aluno aluno)
         {
-            listaAlunos.Add(aluno);
-            return Ok(listaAlunos);
+            var t = new Tools<Aluno>();
+            if (t.Adiciona(aluno))
+            {
+                return Ok("Adicionou!");
+            }
+            else
+            {
+                return BadRequest("Este aluno já existe!");
+            }
         }
 
         [HttpGet]
-        [Route("BuscaAluno")]
-        public ActionResult BuscaAluno(string nome)//ok
+        [Route("BuscaAluno")]//ok
+        public ActionResult BuscaAluno(string nome)
         {
             try
             {
-                var result = listaAlunos.Where(x => x.Nome.Contains(nome)).ToList();
-                if (result.Count == 0)
-                {
-                    return BadRequest(Message.Failure);
-                }
+                var t = new Tools<Aluno>();
+                var encontrou = t.FindAluno(nome, out bool temaluno);
+                if (!temaluno) { return BadRequest("Aluno não encontrado/cadastrado!"); }
                 else
-                    return Ok(result);
+                {
+                    return Ok(encontrou);
+                }
             }
             catch (Exception ex)
             {
@@ -61,17 +66,23 @@ namespace PADAWAN.Universidade.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteAluno")]
+        [Route("DeleteAluno")]//ok
         public ActionResult DeleteAluno(string nome, string sobrenome)
         {
-            try//pq pra deletar eu uso o nome e sobrenome// ou aqui pelo cpf?
+            try
             {
-                var result = listaAlunos.RemoveAll(x => x.Nome == nome && x.Sobrenome == sobrenome);
+                var t = new Tools<Aluno>();
+                var removeu = t.DeleteAluno(nome,sobrenome);
 
-                if (result == 0) //se for 0 ele nao removeu nada da lista
-                    return BadRequest(Message.Failure);
+                if (!removeu)//false
+                {
+                    return BadRequest("Houve algum erro! O Aluno nao foi encontrado/removido!");
+                }
                 else
-                    return Ok("Aluno removido com Sucesso!");
+                {
+                    return Ok("Aluno Removido com Sucesso!");
+                }
+
             }
             catch (Exception)
             {
@@ -80,30 +91,26 @@ namespace PADAWAN.Universidade.Controllers
         }
 
         [HttpPut]
-        [Route("UpdateAluno")]
-        public ActionResult UpdateAluno(string cpfAluno, string novoAluno)
+        [Route("UpdateAluno")]//ok
+        public ActionResult UpdateAluno(int IDaluno, string novoAluno)
         {
-            var result = new Result<List<Aluno>>();
             try
             {
-                
-                result.Data = listaAlunos.Where(x => x.CPF == cpfAluno).ToList();
-                var newAluno = result.Data.Select(s =>
-                {
-                    s.CPF = novoAluno; 
-                    return s;
+                var t = new Tools<Aluno>();
+                var atualizou = t.UpdateAluno(IDaluno, novoAluno);
 
-                }).ToList();
-                //listaAlunos.Add((Aluno) newAluno[0]);
-               // listaAlunos.Add(result.Data[0]);
-                
-                return Ok("Aluno Atualizado com Sucesso!");//trocou sem eu ter adicionado na lista!!!get-put
+                if (!atualizou)//false
+                {
+                    return BadRequest("Houve algum erro! O Aluno nao foi encontrado/atualizado!");
+                }
+                else
+                {
+                    return Ok("Aluno Atualizado com Sucesso!");
+                }
             }
             catch (Exception ex)
             {
-                result.Error = true;
-                result.Message = ex.Message;
-                return BadRequest(result);
+                return BadRequest(Message.Failure);
             }
 
         }

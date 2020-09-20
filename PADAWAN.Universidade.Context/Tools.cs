@@ -45,7 +45,6 @@ namespace PADAWAN.Universidade.Context
             return conexao.Cursos.Where(q => q.Nome == nome).Any();
         }
 
-        
         public List<Curso> FindCurso(string curso, out bool temcurso)
         {
             conexao = new BDUniversidadeContext();
@@ -118,5 +117,99 @@ namespace PADAWAN.Universidade.Context
                 }
             }
         }
+
+
+
+
+        public bool Adiciona(Aluno aluno)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                //verifica primeiro se o Aluno ja existe na Tabela Alunos
+                var retorno = conexao.Alunos.Where(q => q.CPF == aluno.CPF).Any();
+
+                if (!retorno)//nao tenho, logo add
+                {
+                    conexao.Alunos.Add(aluno);
+                    conexao.SaveChanges();
+                    return true;
+                }
+                else//ja consta no bd
+                {
+                    return false;
+                }
+            }
+        }
+
+        public List<Aluno> FindAluno(string nome, out bool encontrou)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                //busca no banco na Tabela Alunos, 
+                //try
+                var result = conexao.Alunos.Where(x => x.Nome.Contains(nome)).ToList();
+                if (result.Count == 0)//nao encontrou
+                {
+                    encontrou = false;
+                    return result;
+                }
+                else
+                {
+                    encontrou = true;
+                    return result;
+                }
+                //catch (Exception ex)
+            }
+        }
+
+        public bool DeleteAluno(string nome, string sobrenome)
+        {
+            bool removeu;
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var result = conexao.Alunos.Where(x => x.Nome.Contains(nome) && x.Sobrenome.Contains(sobrenome)).ToList();
+                if (result.Count == 0)//nao encontrou o aluno p remover
+                {
+                    return removeu = false;
+                }
+                else
+                {
+                    conexao.Alunos.Remove(result.FirstOrDefault());
+                    conexao.SaveChanges();
+                    removeu = true;
+                    return removeu;
+                }
+
+            }//Deletar em cascada? 
+        }
+
+        public bool UpdateAluno(int IDaluno, string novonome)
+        {
+            bool atualizou;
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var result = conexao.Alunos.Where(x => x.Id == IDaluno).ToList();
+                if (result.Count == 0)
+                {
+                    return atualizou = false;
+                }
+                else
+                {
+                    var aluninho = result.FirstOrDefault();
+                    aluninho.Nome = novonome;
+                    atualizou = true;
+                    conexao.SaveChanges();
+                    return atualizou;
+
+                }
+            }
+        }
+
+
+
     }
 }
