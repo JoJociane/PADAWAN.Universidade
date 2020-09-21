@@ -14,7 +14,7 @@ namespace PADAWAN.Universidade.API.Controllers
     public class CursoController : ControllerBase
     {
         [HttpGet]//exemplo
-        [Route("GetCuso")]
+        [Route("GetCurso")]
         public ActionResult GetCurso()
         {
             var curso = new Curso()

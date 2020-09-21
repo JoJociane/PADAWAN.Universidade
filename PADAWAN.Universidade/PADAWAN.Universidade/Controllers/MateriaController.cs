@@ -26,7 +26,6 @@ namespace PADAWAN.Universidade.API.Controllers
                 SituacaoMateria = "Ativa",
                 
             };
-
             return Ok(materia);
         }
 

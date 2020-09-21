@@ -34,6 +34,16 @@ namespace PADAWAN.Universidade.Controllers
         [Route("PostAluno")]//ok, mas ver questao da FK
         public ActionResult PostAluno(Aluno aluno)
         {
+            //verifica se a data, cpf estao no formato correto
+            //poderia verificar se o curso id curso esta ativo ou nao
+
+
+            var dat = Aluno.ValidaData(aluno.DataNascimento);
+            var cpfcor = Aluno.ValidaCpf(aluno.CPF);
+            if (!cpfcor) return BadRequest("Erro ao cadastrar CPF! por favor insira novamente!");
+            if (!dat) return BadRequest("Erro ao cadastrar DATA Nascimento! por favor insira novamente!");
+
+
             var t = new Tools<Aluno>();
             if (t.Adiciona(aluno))
             {

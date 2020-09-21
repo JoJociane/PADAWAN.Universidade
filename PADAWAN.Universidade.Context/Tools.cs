@@ -1,4 +1,5 @@
-﻿using PADAWAN.Universidade.Context;
+﻿using Microsoft.AspNetCore.Mvc;
+using PADAWAN.Universidade.Context;
 using PADAWAN.Universidade.Util;
 using PADAWAN.Universidade.Util.Models;
 using System;
@@ -22,8 +23,9 @@ namespace PADAWAN.Universidade.Context
             conexao = new BDUniversidadeContext();
             using (conexao)
             {
+
                 //verifica primeiro se o curso ja existe na Tabela Cursos
-                var retorno = RetornaCurso(curso.Nome);
+                 var retorno = RetornaCurso(curso.Nome);
 
                 if (!retorno)//nao tenho, logo add
                 {
@@ -126,6 +128,7 @@ namespace PADAWAN.Universidade.Context
             conexao = new BDUniversidadeContext();
             using (conexao)
             {
+                
                 //verifica primeiro se o Aluno ja existe na Tabela Alunos
                 var retorno = conexao.Alunos.Where(q => q.CPF == aluno.CPF).Any();
 
