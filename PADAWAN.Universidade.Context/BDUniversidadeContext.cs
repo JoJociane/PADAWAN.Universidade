@@ -51,6 +51,6 @@ namespace PADAWAN.Universidade.Context
 
         public DbSet<Notas> Notas { get; set; }
 
-        public DbSet<Notas> MateriaCurso { get; set; }
+        public DbSet<MateriaCurso> MateriaCurso { get; set; }
     }
 }

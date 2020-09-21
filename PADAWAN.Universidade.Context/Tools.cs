@@ -301,5 +301,169 @@ namespace PADAWAN.Universidade.Context
         }
 
 
+
+
+        public bool Adiciona(Notas nota)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                //preciso verificar se aquela ID materia já esta relacionada com a minha ID Aluno
+                var retorno = conexao.Notas.Where(q => q.IdAluno.Equals(nota.IdAluno) && q.IdMateria.Equals(nota.IdMateria)).Any();
+
+                if (!retorno)//nao tenho, logo add
+                {
+                    conexao.Notas.Add(nota);
+                    conexao.SaveChanges();
+                    return true;
+                }
+                else//ja consta no bd
+                {
+                    return false;
+                }
+            }
+        }
+
+        public List<Notas> FindNota(int  IdAluno , out bool encontrou)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var result = conexao.Notas.Where(x => x.IdAluno.Equals(IdAluno)).ToList();
+                //se encontrou gostaria que mostrasse o nome do aluno as materias e suas respectivas notas 
+                
+                if (result.Count == 0)//nao encontrou
+                {
+                    encontrou = false;
+                    return result;
+                }
+                else
+                {
+                    encontrou = true;
+                    return result;
+                }
+               
+            }
+        }
+
+        public bool DeleteNotas(int IdAluno, int IdMateria)
+        {
+            bool removeu;
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+
+                var retorno = conexao.Notas.Where(q => q.IdAluno.Equals(IdAluno) && q.IdMateria.Equals(IdMateria)).ToList();
+
+                if (retorno.Count == 0)//nao encontrou o materias p remover
+                {
+                    return removeu = false;
+                }
+                else
+                {
+                    conexao.Notas.Remove(retorno.FirstOrDefault());
+                    conexao.SaveChanges();
+                    removeu = true;
+                    return removeu;
+                }
+
+            }//Deletar em cascada? 
+        }
+
+        public bool UpdateNota(int IdAluno, int IdMateria, double valor)
+        {
+            bool atualizou;
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+
+                var retorno = conexao.Notas.Where(q => q.IdAluno.Equals(IdAluno) && q.IdMateria.Equals(IdMateria)).ToList();
+                
+                if (retorno.Count == 0)
+                {
+                    return atualizou = false;
+                }
+                else
+                {
+                    var not = retorno.FirstOrDefault();
+                    not.ValorNota = valor;
+                    atualizou = true;
+                    conexao.SaveChanges();
+                    return atualizou;
+
+                }
+            }
+        }
+
+
+
+        public bool Adiciona(int IdMateria, int IdCurso)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                //preciso verificar se aquela ID materia já esta relacionada com a minha ID Curso
+                var retorno = conexao.MateriaCurso.Where(q => q.IdMateria.Equals(IdMateria) && q.IdCurso.Equals(IdCurso)).Any();
+
+                if (!retorno)//nao tenho, logo add
+                {
+                    var rel = new MateriaCurso();
+                    rel.IdMateria = IdMateria;
+                    rel.IdCurso = IdCurso;
+                    conexao.MateriaCurso.Add(rel);
+                    conexao.SaveChanges();
+                    return true;
+                }
+                else//ja consta no bd
+                {
+                    return false;
+                }
+            }
+        }
+        public List<MateriaCurso> FindMateria(int Idmateria, out bool achou)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                // ver se o Id da materia passado tem alguma relacao com algum id curso
+                var result = conexao.MateriaCurso.Where(x => x.IdMateria.Equals(Idmateria)).ToList();
+                if (result.Count == 0)//nao encontrou
+                {
+                    achou = false;
+                    return result;
+                }
+                else
+                {
+                    achou = true;
+                    return result;
+                }
+            }
+        }
+        public bool DeleteMC(int IdMateria, int IdCurso)
+        {
+            bool removeu;
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+
+                var retorno = conexao.MateriaCurso.Where(q => q.IdMateria.Equals(IdMateria) && q.IdCurso.Equals(IdCurso)).ToList();
+
+                if (retorno.Count == 0)//nao encontrou o materias p remover
+                {
+                    return removeu = false;
+                }
+                else
+                {
+                    conexao.MateriaCurso.Remove(retorno.FirstOrDefault());
+                    conexao.SaveChanges();
+                    removeu = true;
+                    return removeu;
+                }
+
+            }//Deletar em cascada? 
+        }
+
+  
+
     }
 }
