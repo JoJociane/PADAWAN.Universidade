@@ -48,7 +48,7 @@ namespace PADAWAN.Universidade.API.Controllers
         {
             var t = new Tools<Notas>();
             var encontrou = t.FindNota(IdAluno, out bool tem_nota);
-            if (!tem_nota) { return BadRequest($"Notas não encontradas/cadastradas para o aluno {aluno}."); }
+            if (!tem_nota) { return BadRequest($"Notas não encontradas/cadastradas para o aluno."); }
             else
             {
                 return Ok(encontrou);
