@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-
+using System.Text.RegularExpressions;
 
 namespace PADAWAN.Universidade.Context
 {
@@ -91,7 +91,7 @@ namespace PADAWAN.Universidade.Context
             }
         }
 
-        public bool UpdateCurso(int IDcurso, string novocurso)
+        public bool UpdateCurso(int IDcurso, string novocurso, string status)
         {
             bool atualizou;
             conexao = new BDUniversidadeContext();
@@ -109,6 +109,7 @@ namespace PADAWAN.Universidade.Context
                     //newcurso.Nome = novocurso;//seto nome novo obj
 
                     meucursinho.Nome = novocurso;
+                    meucursinho.SituacaoCurso = status;
                     atualizou = true;
                     // conexao.Cursos.Add(newcurso);//add no banco
                     conexao.SaveChanges();
@@ -128,9 +129,10 @@ namespace PADAWAN.Universidade.Context
             conexao = new BDUniversidadeContext();
             using (conexao)
             {
-                
                 //verifica primeiro se o Aluno ja existe na Tabela Alunos
                 var retorno = conexao.Alunos.Where(q => q.CPF == aluno.CPF).Any();
+                string limpo = Regex.Replace(aluno.CPF, @"\D", ""); //limpa caracteres do cpf
+                aluno.CPF = limpo;
 
                 if (!retorno)//nao tenho, logo add
                 {
@@ -280,7 +282,7 @@ namespace PADAWAN.Universidade.Context
             }//Deletar em cascada? 
         }
 
-        public bool UpdateMateria(int IDmateria, string novonome)
+        public bool UpdateMateria(int IDmateria, string novonome,string status)
         {
             bool atualizou;
             conexao = new BDUniversidadeContext();
@@ -295,6 +297,7 @@ namespace PADAWAN.Universidade.Context
                 {
                     var mat = result.FirstOrDefault();
                     mat.Descricao = novonome;
+                    mat.SituacaoMateria = status;
                     atualizou = true;
                     conexao.SaveChanges();
                     return atualizou;
@@ -468,5 +471,69 @@ namespace PADAWAN.Universidade.Context
 
   
 
+        public bool VerificaCurso(int IdCurso)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var cursosativos= conexao.Cursos.Where(q => q.SituacaoCurso.Equals("Ativo")).ToList();
+                bool achou = false;
+                foreach(var curso in cursosativos)
+                {
+                    if (curso.Id == IdCurso) { achou = true; }
+                }
+                return achou;
+            }
+        }
+
+        public List<Aluno> AllAlunos()
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var alunos = conexao.Alunos.Select(q => q).ToList();
+                return alunos;
+            }
+        }
+
+        public List<Curso> AllCursos()
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var c = conexao.Cursos.Select(q => q).ToList();
+                return c;
+            }
+        }
+
+        public List<Materia> AllMaterias()
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var m = conexao.Materias.Select(q => q).ToList();
+                return m;
+            }
+        }
+
+        public List<Notas> AllNotas()
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var n = conexao.Notas.Select(q => q).ToList();
+                return n;
+            }
+        }
+
+        public List<MateriaCurso> AllMC()
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var mc = conexao.MateriaCurso.Select(q => q).ToList();
+                return mc;
+            }
+        }
     }
 }

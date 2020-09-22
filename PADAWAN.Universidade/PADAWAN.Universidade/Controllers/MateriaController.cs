@@ -13,8 +13,7 @@ namespace PADAWAN.Universidade.API.Controllers
     [Route("CadastroMateria")]
     public class MateriaController : ControllerBase
     {
-        public static List<Materia> listaMateria = new List<Materia>(); 
-
+        
         [HttpGet]//exemplo
         [Route("GetMateria")]
         public ActionResult GetMateria()
@@ -33,14 +32,28 @@ namespace PADAWAN.Universidade.API.Controllers
         [Route("PostMateria")]//ok
         public ActionResult PostMateria(Materia materia)
         {
-            var t = new Tools<Materia>();
-            if (t.Adiciona(materia))
+            try
             {
-                return Ok("Adicionou!");
+                var dat = Aluno.ValidaData(materia.DataCadastro);
+
+                if (!dat) return BadRequest("Erro ao cadastrar! Não há como incluir data futura.");
+                var name = Aluno.ValidaNome(materia.Descricao);
+
+                if (!name) return BadRequest("Erro ao cadastrar Descrição! Deve conter apenas letras!");
+               
+                var t = new Tools<Materia>();
+                if (t.Adiciona(materia))
+                {
+                    return Ok("Adicionou!");
+                }
+                else
+                {
+                    return BadRequest("Materia já existe!");
+                }
             }
-            else
+            catch (Exception)
             {
-                return BadRequest("Materia já existe!");
+                return BadRequest(Message.Failure);
             }
         }
 
@@ -64,6 +77,23 @@ namespace PADAWAN.Universidade.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("BuscaListaMaterias")]//ok
+        public ActionResult BuscaListaMaterias()
+        {
+            try
+            {
+                var t = new Tools<Materia>();
+                var listaMaterias = t.AllMaterias();
+
+                return Ok(listaMaterias);
+
+            }
+            catch (Exception ex)
+            {
+                return NotFound(Message.Failure + "----" + ex.Message);
+            }
+        }
 
         [HttpDelete]
         [Route("DeleteMateria")]//ok
@@ -91,12 +121,13 @@ namespace PADAWAN.Universidade.API.Controllers
 
         [HttpPut]
         [Route("UpdateMateria")]//ok
-        public ActionResult UpdateMateria(int IDmateria, string novamateria)
+        public ActionResult UpdateMateria(int IDmateria, string novamateria, string status)
         {
             try
             {
+                if (IDmateria == null || novamateria == null) { return BadRequest("Por favor informe um ID e o nome que deseja atualizar."); }
                 var t = new Tools<Curso>();
-                var atualizou = t.UpdateMateria(IDmateria, novamateria);
+                var atualizou = t.UpdateMateria(IDmateria, novamateria, status);
 
                 if (!atualizou)//false
                 {

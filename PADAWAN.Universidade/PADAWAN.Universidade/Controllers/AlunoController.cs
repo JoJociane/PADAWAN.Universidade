@@ -36,22 +36,34 @@ namespace PADAWAN.Universidade.Controllers
         {
             //verifica se a data, cpf estao no formato correto
             //poderia verificar se o curso id curso esta ativo ou nao
-
+            var t = new Tools<Aluno>();
 
             var dat = Aluno.ValidaData(aluno.DataNascimento);
             var cpfcor = Aluno.ValidaCpf(aluno.CPF);
-            if (!cpfcor) return BadRequest("Erro ao cadastrar CPF! por favor insira novamente!");
-            if (!dat) return BadRequest("Erro ao cadastrar DATA Nascimento! por favor insira novamente!");
+            var name = Aluno.ValidaNome(aluno.Nome);
+            var verfCurso = t.VerificaCurso(aluno.IdCurso);
 
+            if (aluno.Sobrenome == "" ) { return BadRequest("Por favor informe um Nome e Sobrenome."); } //??
+            if (!cpfcor) return BadRequest("Erro ao cadastrar CPF! por favor verifique formato.");
+            if (!dat) return BadRequest("Erro ao cadastrar! Não possui idade mínima, ou digitou data incorreta.");
+            if (!name) return BadRequest("Erro ao cadastrar Nome! Deve conter apenas letras!");
+            if(!verfCurso) return BadRequest("Erro ao incluir Curso, este deve estar Inativo ou Inexistente.");
 
-            var t = new Tools<Aluno>();
-            if (t.Adiciona(aluno))
+            try
             {
-                return Ok("Adicionou!");
+               
+                if (t.Adiciona(aluno))
+                {
+                    return Ok("Adicionou!");
+                }
+                else
+                {
+                    return BadRequest("Este aluno já existe!");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Este aluno já existe!");
+                return NotFound(Message.Failure + "----" + ex.Message);
             }
         }
 
@@ -75,6 +87,24 @@ namespace PADAWAN.Universidade.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("BuscaListaAluno")]//ok
+        public ActionResult BuscaListaAluno()
+        {
+            try
+            {
+                var t = new Tools<Aluno>();
+                var listaAlunos = t.AllAlunos();
+
+                return Ok(listaAlunos);
+                
+            }
+            catch (Exception ex)
+            {
+                return NotFound(Message.Failure + "----" + ex.Message);
+            }
+        }
+
         [HttpDelete]
         [Route("DeleteAluno")]//ok
         public ActionResult DeleteAluno(string nome, string sobrenome)
@@ -82,6 +112,8 @@ namespace PADAWAN.Universidade.Controllers
             try
             {
                 var t = new Tools<Aluno>();
+
+                if(nome == null || sobrenome == null) { return BadRequest("Por favor informe um Nome e Sobrenome."); }
                 var removeu = t.DeleteAluno(nome,sobrenome);
 
                 if (!removeu)//false
@@ -106,6 +138,8 @@ namespace PADAWAN.Universidade.Controllers
         {
             try
             {
+                if (IDaluno == null || novoAluno == null) { return BadRequest("Por favor informe um ID e o nome que deseja atualizar."); }
+                
                 var t = new Tools<Aluno>();
                 var atualizou = t.UpdateAluno(IDaluno, novoAluno);
 

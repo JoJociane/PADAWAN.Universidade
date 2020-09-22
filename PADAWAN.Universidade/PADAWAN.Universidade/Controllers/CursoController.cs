@@ -20,25 +20,34 @@ namespace PADAWAN.Universidade.API.Controllers
             var curso = new Curso()
             {
                 Nome = "Ingles",
-                SituacaoCurso = "Ativo"
+                SituacaoCurso = "Ativo",
             };
-            // curso.Materias.Add(new Materia() { }); 
-            return Ok(curso); //retorno o objeto para inserir no swagger
+            return Ok(curso);
         }
 
 
         [HttpPost] //ok
         [Route("PostCurso")]
-        public ActionResult PostCurso(Curso curso)//objeto vem do front
+        public ActionResult PostCurso(Curso curso)
         {
-            var t = new Tools<Curso>();
-            if (t.Adiciona(curso))
+            try
             {
-                return Ok("Adicionou!");
+                var name = Aluno.ValidaNome(curso.Nome);
+                if (!name) return BadRequest("Erro ao cadastrar Nome! Deve conter apenas letras!");
+                
+                var t = new Tools<Curso>();
+                if (t.Adiciona(curso))
+                {
+                    return Ok("Adicionou!");
+                }
+                else
+                {
+                    return BadRequest("Curso já existe!");
+                }
             }
-            else
+            catch (Exception)
             {
-                return BadRequest("Curso já existe!");
+                return BadRequest(Message.Failure);
             }
         }
 
@@ -47,18 +56,43 @@ namespace PADAWAN.Universidade.API.Controllers
         [Route("BuscaCurso")]
         public ActionResult Busca(string curso)
         {
-            var t = new Tools<Curso>();
-            var encontrou = t.FindCurso(curso, out bool temcurso);
-            if (!temcurso) { return BadRequest("Curso não encontrado/cadastrado!"); }
-            else
+            try
             {
-                return Ok(encontrou);
+                var t = new Tools<Curso>();
+                var encontrou = t.FindCurso(curso, out bool temcurso);
+                if (!temcurso) { return BadRequest("Curso não encontrado/cadastrado!"); }
+                else
+                {
+                    return Ok(encontrou);
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest(Message.Failure);
             }
 
         }
 
+        [HttpGet]
+        [Route("BuscaListaCursos")]//ok
+        public ActionResult BuscaListaCursos()
+        {
+            try
+            {
+                var t = new Tools<Curso>();
+                var listaCursos = t.AllCursos();
+
+                return Ok(listaCursos);
+
+            }
+            catch (Exception ex)
+            {
+                return NotFound(Message.Failure + "----" + ex.Message);
+            }
+        }
+
         [HttpDelete]
-        [Route("DeleteCurso")]
+        [Route("DeleteCurso")]//ok
         public ActionResult DeleteCurso(string curso)
         {
             try
@@ -81,15 +115,17 @@ namespace PADAWAN.Universidade.API.Controllers
             }
         }
 
-        
         [HttpPut]
-        [Route("UpdateCurso")]
-        public ActionResult UpdateCurso(int IDcurso, string novocurso)
+        [Route("UpdateCurso")]//ok
+        public ActionResult UpdateCurso(int IDcurso, string novocurso, string status)
         {
             try
             {
+                if (IDcurso == null || novocurso == null) { return BadRequest("Por favor informe um ID e o nome que deseja atualizar."); }
+                
                 var t = new Tools<Curso>();
-                var atualizou= t.UpdateCurso(IDcurso,novocurso);
+                
+                var atualizou= t.UpdateCurso(IDcurso,novocurso,status);
 
                 if (!atualizou)//false
                 {
