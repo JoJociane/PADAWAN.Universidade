@@ -31,14 +31,26 @@ namespace PADAWAN.Universidade.API.Controllers
         [Route("PostNota")]
         public ActionResult PostNota(Notas nota)
         {
-            var t = new Tools<Notas>();
-            if (t.Adiciona(nota))
+            try
             {
-                return Ok("Adicionou!");
+                var t = new Tools<Notas>();
+                var verifMat = t.VerificaMateriaAluno(nota.IdMateria, nota.IdAluno);
+                
+                if (!verifMat) return BadRequest("Erro ao incluir Materia ou Aluno!");
+                var adds = t.Adiciona(nota);
+
+                if (adds)
+                {
+                    return Ok("Adicionou!");
+                }
+                else
+                {
+                    return BadRequest("Houve algum erro em adicionar a nota. ");
+                }
             }
-            else
+            catch (Exception)
             {
-                return BadRequest("Houve algum erro em adicionar a nota. ");
+                return BadRequest(Message.Failure);
             }
         }
 
@@ -46,14 +58,20 @@ namespace PADAWAN.Universidade.API.Controllers
         [Route("BuscaNotaAluno")]
         public ActionResult Busca(int IdAluno)
         {
-            var t = new Tools<Notas>();
-            var encontrou = t.FindNota(IdAluno, out bool tem_nota);
-            if (!tem_nota) { return BadRequest($"Notas não encontradas/cadastradas para o aluno."); }
-            else
+            try
             {
-                return Ok(encontrou);
+                var t = new Tools<Notas>();
+                var encontrou = t.FindNota(IdAluno, out bool tem_nota);
+                if (!tem_nota) { return BadRequest($"Notas não encontradas/cadastradas para o aluno."); }
+                else
+                {
+                    return Ok(encontrou);
+                }
             }
-
+            catch (Exception)
+            {
+                return BadRequest(Message.Failure);
+            }
         }
 
 

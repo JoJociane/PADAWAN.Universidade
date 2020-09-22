@@ -316,17 +316,22 @@ namespace PADAWAN.Universidade.Context
             {
                 //preciso verificar se aquela ID materia já esta relacionada com a minha ID Aluno
                 var retorno = conexao.Notas.Where(q => q.IdAluno.Equals(nota.IdAluno) && q.IdMateria.Equals(nota.IdMateria)).Any();
-
+                bool ver = false;
                 if (!retorno)//nao tenho, logo add
                 {
                     conexao.Notas.Add(nota);
+                    ver = true;
                     conexao.SaveChanges();
-                    return true;
+                    
                 }
                 else//ja consta no bd
                 {
-                    return false;
+                    ver = false;
                 }
+
+                return ver;
+
+
             }
         }
 
@@ -471,21 +476,7 @@ namespace PADAWAN.Universidade.Context
 
   
 
-        public bool VerificaCurso(int IdCurso)
-        {
-            conexao = new BDUniversidadeContext();
-            using (conexao)
-            {
-                var cursosativos= conexao.Cursos.Where(q => q.SituacaoCurso.Equals("Ativo")).ToList();
-                bool achou = false;
-                foreach(var curso in cursosativos)
-                {
-                    if (curso.Id == IdCurso) { achou = true; }
-                }
-                return achou;
-            }
-        }
-
+       
         public List<Aluno> AllAlunos()
         {
             conexao = new BDUniversidadeContext();
@@ -535,5 +526,48 @@ namespace PADAWAN.Universidade.Context
                 return mc;
             }
         }
+
+
+
+        public bool VerificaCurso(int IdCurso)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                var cursosativos = conexao.Cursos.Where(q => q.SituacaoCurso.Equals("Ativo")).ToList();
+                bool achou = false;
+                foreach (var curso in cursosativos)
+                {
+                    if (curso.Id == IdCurso) { achou = true; }
+                }
+                return achou;
+            }
+        }
+
+        public bool VerificaMateriaAluno(int IdMateria, int Idaluno)
+        {
+            conexao = new BDUniversidadeContext();
+            using (conexao)
+            {
+                // a materia deve estar cadastrada, ativa e estar relacionada com curso
+                // var materiasCadastradaEAtiva = conexao.Materias.Where(q => q.SituacaoMateria.Equals("Ativa") && q.Id == IdMateria).FirstOrDefault();
+
+                //para estar em materiacurso, tem que estar ativa
+
+                //pesquiso a materia, que esta relacionada com o curso
+                var materiaEstaEmCurso = conexao.MateriaCurso.Where(q => q.IdMateria.Equals(IdMateria)).ToList();
+                var aux = materiaEstaEmCurso.FirstOrDefault(); //se exite eu pego este materia curso
+                //agora vejo se o id curso que está nela é o mesmo do aluno
+                var aux1 = conexao.Alunos.Where(q => q.IdCurso == aux.IdCurso).ToList();
+
+                foreach (var aluno in aux1) 
+                {
+                    if (aluno.Id == Idaluno) { return true; }
+                }
+                return false;
+
+            }
+        }
+
     }
 }
