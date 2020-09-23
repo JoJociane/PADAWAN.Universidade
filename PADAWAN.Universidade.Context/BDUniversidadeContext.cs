@@ -34,13 +34,6 @@ namespace PADAWAN.Universidade.Context
             modelBuilder.Entity<Notas>().HasOne(q => q.Materia).WithMany(q => q.Nota).HasForeignKey(q => q.IdMateria);
             modelBuilder.Entity<Notas>().HasOne(q => q.Aluno).WithMany(q => q.Nota).HasForeignKey(q => q.IdAluno);
 
-            //modelBuilder.Entity<Curso>().HasMany(q => q.Alunos).WithOne().HasForeignKey(q => q.IdCurso);
-
-            //duvidaaa!!!!
-            //aluno-curso 1:n
-            //builder.HasOne(q => q.Curso).WithMany().HasForeignKey(q => q.IdCurso);
-            //curso-aluno n:1
-            //builder.HasMany(q => q.Alunos).WithOne().HasForeignKey(q => q.IdCurso);
         }
 
         public DbSet<Aluno> Alunos { get; set; }

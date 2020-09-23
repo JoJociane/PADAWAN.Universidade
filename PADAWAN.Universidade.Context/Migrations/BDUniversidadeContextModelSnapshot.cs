@@ -31,14 +31,11 @@ namespace PADAWAN.Universidade.Context.Migrations
                         .HasColumnType("nvarchar(16)")
                         .HasMaxLength(16);
 
-                    b.Property<int?>("CursoId")
+                    b.Property<int>("CursoId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DataNascimento")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("IdCurso")
-                        .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -127,6 +124,9 @@ namespace PADAWAN.Universidade.Context.Migrations
                     b.Property<int>("IdAluno")
                         .HasColumnType("int");
 
+                    b.Property<int>("IdNota")
+                        .HasColumnType("int");
+
                     b.Property<double>("ValorNota")
                         .HasColumnType("float");
 
@@ -141,7 +141,9 @@ namespace PADAWAN.Universidade.Context.Migrations
                 {
                     b.HasOne("PADAWAN.Universidade.Util.Models.Curso", "Curso")
                         .WithMany("Alunos")
-                        .HasForeignKey("CursoId");
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PADAWAN.Universidade.Util.Models.MateriaCurso", b =>

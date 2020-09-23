@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PADAWAN.Universidade.Util.ErrosMensagem;
+using PADAWAN.Universidade.Util.Validacoes;
+using PADAWAN.Universidade.Context.Operacoes;
 
 namespace PADAWAN.Universidade.API.Controllers
 {
@@ -24,7 +27,7 @@ namespace PADAWAN.Universidade.API.Controllers
             return Ok(curso);
         }
 
-        [HttpPost] //+- trocar objeto por chaves Id
+        [HttpPost] //ok
         [Route("PostMateriaCurso")]
         public ActionResult PostMateriaCurso(int IdMateria, int IdCurso)
         { 
@@ -76,8 +79,6 @@ namespace PADAWAN.Universidade.API.Controllers
                 return BadRequest(Message.Failure);
             }
         }
-
-        //atualizar
 
     }
 }

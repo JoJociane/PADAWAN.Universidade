@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PADAWAN.Universidade.Context;
 using PADAWAN.Universidade.Util;
+using PADAWAN.Universidade.Util.ErrosMensagem;
 using PADAWAN.Universidade.Util.Models;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace PADAWAN.Universidade.Context
+namespace PADAWAN.Universidade.Context.Operacoes
 {
     public class Tools<T>
     {
@@ -25,7 +26,9 @@ namespace PADAWAN.Universidade.Context
             {
 
                 //verifica primeiro se o curso ja existe na Tabela Cursos
-                 var retorno = RetornaCurso(curso.Nome);
+                var retorno = conexao.Cursos.Where(q => q.Nome == curso.Nome).Any();
+                //se a tabela Cursos tiver ALGUM curso com o mesmo nome passado ele retorna TRUE, 
+                //senao FALSE (ou seja, nao existe entao posso add no banco)
 
                 if (!retorno)//nao tenho, logo add
                 {
@@ -38,13 +41,6 @@ namespace PADAWAN.Universidade.Context
                     return false;
                 }
             }
-        }
-
-        public bool RetornaCurso(string nome)
-        {   
-            //se a tabela Cursos tiver ALGUM curso com o mesmo nome passado ele retorna TRUE, 
-            //senao FALSE (ou seja, nao existe entao posso add no banco)
-            return conexao.Cursos.Where(q => q.Nome == nome).Any();
         }
 
         public List<Curso> FindCurso(string curso, out bool temcurso)
@@ -76,7 +72,7 @@ namespace PADAWAN.Universidade.Context
             using (conexao)
             {
                 var result = conexao.Cursos.Where(x => x.Nome.Contains(curso)).ToList();
-                if(result.Count == 0)//nao encontrou o curso p remover
+                if (result.Count == 0)//nao encontrou o curso p remover
                 {
                     return removeu = false;
                 }
@@ -87,7 +83,7 @@ namespace PADAWAN.Universidade.Context
                     removeu = true;
                     return removeu;
                 }
-                
+
             }
         }
 
@@ -98,7 +94,7 @@ namespace PADAWAN.Universidade.Context
             using (conexao)
             {
                 var result = conexao.Cursos.Where(x => x.Id == IDcurso).ToList();
-                if(result.Count == 0)
+                if (result.Count == 0)
                 {
                     return atualizou = false;
                 }
@@ -114,16 +110,16 @@ namespace PADAWAN.Universidade.Context
                     // conexao.Cursos.Add(newcurso);//add no banco
                     conexao.SaveChanges();
                     return atualizou;
-                   // conexao.Cursos.Remove(meucursinho);//excluo anterior
-                    
-                    
+                    // conexao.Cursos.Remove(meucursinho);//excluo anterior
+
+
                 }
             }
         }
 
 
 
-
+        
         public bool Adiciona(Aluno aluno)
         {
             conexao = new BDUniversidadeContext();
@@ -221,8 +217,9 @@ namespace PADAWAN.Universidade.Context
             conexao = new BDUniversidadeContext();
             using (conexao)
             {
-                
+
                 var retorno = conexao.Materias.Where(q => q.Descricao == materia.Descricao).Any();
+
 
                 if (!retorno)//nao tenho, logo add
                 {
@@ -282,7 +279,7 @@ namespace PADAWAN.Universidade.Context
             }//Deletar em cascada? 
         }
 
-        public bool UpdateMateria(int IDmateria, string novonome,string status)
+        public bool UpdateMateria(int IDmateria, string novonome, string status)
         {
             bool atualizou;
             conexao = new BDUniversidadeContext();
@@ -322,7 +319,7 @@ namespace PADAWAN.Universidade.Context
                     conexao.Notas.Add(nota);
                     ver = true;
                     conexao.SaveChanges();
-                    
+
                 }
                 else//ja consta no bd
                 {
@@ -335,14 +332,14 @@ namespace PADAWAN.Universidade.Context
             }
         }
 
-        public List<Notas> FindNota(int  IdAluno , out bool encontrou)
+        public List<Notas> FindNota(int IdAluno, out bool encontrou)
         {
             conexao = new BDUniversidadeContext();
             using (conexao)
             {
                 var result = conexao.Notas.Where(x => x.IdAluno.Equals(IdAluno)).ToList();
                 //se encontrou gostaria que mostrasse o nome do aluno as materias e suas respectivas notas 
-                
+
                 if (result.Count == 0)//nao encontrou
                 {
                     encontrou = false;
@@ -353,7 +350,7 @@ namespace PADAWAN.Universidade.Context
                     encontrou = true;
                     return result;
                 }
-               
+
             }
         }
 
@@ -389,7 +386,7 @@ namespace PADAWAN.Universidade.Context
             {
 
                 var retorno = conexao.Notas.Where(q => q.IdAluno.Equals(IdAluno) && q.IdMateria.Equals(IdMateria)).ToList();
-                
+
                 if (retorno.Count == 0)
                 {
                     return atualizou = false;
@@ -474,9 +471,9 @@ namespace PADAWAN.Universidade.Context
             }//Deletar em cascada? 
         }
 
-  
 
-       
+
+
         public List<Aluno> AllAlunos()
         {
             conexao = new BDUniversidadeContext();
@@ -558,9 +555,9 @@ namespace PADAWAN.Universidade.Context
                 var materiaEstaEmCurso = conexao.MateriaCurso.Where(q => q.IdMateria.Equals(IdMateria)).ToList();
                 var aux = materiaEstaEmCurso.FirstOrDefault(); //se exite eu pego este materia curso
                 //agora vejo se o id curso que está nela é o mesmo do aluno
-                var aux1 = conexao.Alunos.Where(q => q.IdCurso == aux.IdCurso).ToList();
+                var aux1 = conexao.Alunos.Where(q => q.CursoId == aux.IdCurso).ToList();
 
-                foreach (var aluno in aux1) 
+                foreach (var aluno in aux1)
                 {
                     if (aluno.Id == Idaluno) { return true; }
                 }
@@ -568,6 +565,9 @@ namespace PADAWAN.Universidade.Context
 
             }
         }
+        
 
     }
+
+   
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
-namespace PADAWAN.Universidade.Util
+namespace PADAWAN.Universidade.Util.ErrosMensagem
 {
     public class Result<T>
     {

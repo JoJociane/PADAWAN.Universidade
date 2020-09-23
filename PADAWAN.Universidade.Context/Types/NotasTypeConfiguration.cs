@@ -11,10 +11,10 @@ namespace PADAWAN.Universidade.Context.Types
     {
         public void Configure(EntityTypeBuilder<Notas> builder)
         {
+            builder.HasKey(q => q.IdNota);
             builder.HasKey(q => q.IdAluno);
             builder.HasKey(q => q.IdMateria);
 
-            
             builder.Property(q => q.ValorNota).IsRequired();
             
 

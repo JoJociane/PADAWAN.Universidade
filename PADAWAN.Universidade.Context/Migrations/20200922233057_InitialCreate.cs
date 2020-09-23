@@ -46,8 +46,7 @@ namespace PADAWAN.Universidade.Context.Migrations
                     Sobrenome = table.Column<string>(maxLength: 100, nullable: false),
                     DataNascimento = table.Column<DateTime>(nullable: false),
                     CPF = table.Column<string>(maxLength: 16, nullable: false),
-                    IdCurso = table.Column<int>(nullable: false),
-                    CursoId = table.Column<int>(nullable: true)
+                    CursoId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,7 +56,7 @@ namespace PADAWAN.Universidade.Context.Migrations
                         column: x => x.CursoId,
                         principalTable: "Cursos",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -89,6 +88,7 @@ namespace PADAWAN.Universidade.Context.Migrations
                 columns: table => new
                 {
                     IdMateria = table.Column<int>(nullable: false),
+                    IdNota = table.Column<int>(nullable: false),
                     IdAluno = table.Column<int>(nullable: false),
                     ValorNota = table.Column<double>(nullable: false)
                 },

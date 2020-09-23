@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PADAWAN.Universidade.Util.ErrosMensagem;
+using PADAWAN.Universidade.Util.Validacoes;
+using PADAWAN.Universidade.Context.Operacoes;
 
 namespace PADAWAN.Universidade.API.Controllers
 {
@@ -25,14 +28,13 @@ namespace PADAWAN.Universidade.API.Controllers
             return Ok(curso);
         }
 
-
         [HttpPost] //ok
         [Route("PostCurso")]
         public ActionResult PostCurso(Curso curso)
         {
             try
             {
-                var name = Aluno.ValidaNome(curso.Nome);
+                var name = ValidaCurso.ValidaNome(curso.Nome);
                 if (!name) return BadRequest("Erro ao cadastrar Nome! Deve conter apenas letras!");
                 
                 var t = new Tools<Curso>();
@@ -50,7 +52,6 @@ namespace PADAWAN.Universidade.API.Controllers
                 return BadRequest(Message.Failure);
             }
         }
-
 
         [HttpGet]//ok
         [Route("BuscaCurso")]

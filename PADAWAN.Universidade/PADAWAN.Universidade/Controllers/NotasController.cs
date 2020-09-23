@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PADAWAN.Universidade.Util.ErrosMensagem;
+using PADAWAN.Universidade.Util.Validacoes;
+using PADAWAN.Universidade.Context.Operacoes;
 
 namespace PADAWAN.Universidade.API.Controllers
 {
@@ -27,8 +30,8 @@ namespace PADAWAN.Universidade.API.Controllers
             return Ok(nota); 
         }
 
-        [HttpPost] //ok
-        [Route("PostNota")]
+        [HttpPost]           //•	O campo aluno só poderá receber um aluno cadastrado;
+        [Route("PostNota")]  //•	O campo matéria só poderá receber uma matéria cadastrada;
         public ActionResult PostNota(Notas nota)
         {
             try
@@ -54,7 +57,7 @@ namespace PADAWAN.Universidade.API.Controllers
             }
         }
 
-        [HttpGet]// +-
+        [HttpGet]//ok
         [Route("BuscaNotaAluno")]
         public ActionResult Busca(int IdAluno)
         {

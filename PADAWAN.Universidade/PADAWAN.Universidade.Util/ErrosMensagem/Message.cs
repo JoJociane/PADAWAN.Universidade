@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PADAWAN.Universidade.Util
+namespace PADAWAN.Universidade.Util.ErrosMensagem
 {
     public static class Message
     {

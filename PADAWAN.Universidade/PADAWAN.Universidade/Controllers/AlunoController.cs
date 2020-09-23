@@ -7,6 +7,9 @@ using Microsoft.Extensions.Logging;
 using PADAWAN.Universidade.Context;
 using PADAWAN.Universidade.Util;
 using PADAWAN.Universidade.Util.Models;
+using PADAWAN.Universidade.Util.ErrosMensagem;
+using PADAWAN.Universidade.Util.Validacoes;
+using PADAWAN.Universidade.Context.Operacoes;
 
 
 namespace PADAWAN.Universidade.Controllers
@@ -25,24 +28,24 @@ namespace PADAWAN.Universidade.Controllers
                 Sobrenome = "da Silva",
                 DataNascimento = new DateTime(1997, 12, 24),
                 CPF = "796.655.920-33",
-                IdCurso=2
+                CursoId=2
             };
 
             return Ok(aluno);
         }
 
         [HttpPost]
-        [Route("PostAluno")]//ok, mas ver questao da FK
+        [Route("PostAluno")]
         public ActionResult PostAluno(Aluno aluno)
         {
             //verifica se a data, cpf estao no formato correto
             //poderia verificar se o curso id curso esta ativo ou nao
             var t = new Tools<Aluno>();
 
-            var dat = Aluno.ValidaData(aluno.DataNascimento);
-            var cpfcor = Aluno.ValidaCpf(aluno.CPF);
-            var name = Aluno.ValidaNome(aluno.Nome);
-            var verfCurso = t.VerificaCurso(aluno.IdCurso);
+            var dat = ValidaAluno.ValidaData(aluno.DataNascimento);
+            var cpfcor = ValidaAluno.ValidaCpf(aluno.CPF);
+            var name = ValidaAluno.ValidaNome(aluno.Nome);
+            var verfCurso = t.VerificaCurso(aluno.CursoId);
 
             if (aluno.Sobrenome == "" ) { return BadRequest("Por favor informe um Nome e Sobrenome."); } //??
             if (!cpfcor) return BadRequest("Erro ao cadastrar CPF! por favor verifique formato.");
@@ -153,7 +156,7 @@ namespace PADAWAN.Universidade.Controllers
                     return Ok("Aluno Atualizado com Sucesso!");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest(Message.Failure);
             }
